@@ -1,0 +1,7 @@
+Building a pipeline:
+1. Create a GitHub repo and clone it in local(Add experiments).
+2. Add src folder along with all components (run them individually)
+ > components: data_ingestion , data_preporocessing 
+3. Add data , models , reports directories to .gitignore file ,bcz we do not want the git to track these artifacts or the metadata , bcz many time it may happen that the size of these data could be very large , eg : if we are using a neural network model then it may happen that its pkl file would go in Gbs. and for this reason only we use git 
+
+4. Now git add , commit , push
