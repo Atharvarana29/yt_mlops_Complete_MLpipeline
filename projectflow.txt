@@ -1,7 +1,21 @@
-Building a pipeline:
+stage 1
+# Building a pipeline: 
+
 1. Create a GitHub repo and clone it in local(Add experiments).
 2. Add src folder along with all components (run them individually)
  > components: data_ingestion , data_preporocessing 
 3. Add data , models , reports directories to .gitignore file ,bcz we do not want the git to track these artifacts or the metadata , bcz many time it may happen that the size of these data could be very large , eg : if we are using a neural network model then it may happen that its pkl file would go in Gbs. and for this reason only we use git 
-
 4. Now git add , commit , push
+
+
+stage  2:
+# Setting/Automating the dvc pipeline(without params)
+
+5.Create dvc.yaml file and add stages to it.
+6. dvc init then do "dvc repro"(command to reproduce the pipeline but for using it first we need to initialize the dvc) to test the pipeline automation . iska itna understanding hai ki next time run hone par ye khud hi kuch steps ko skip kar deta hai ,  where no changes have been made, bcz output will be same  .
+(check dvc dag) to visualize the pipeline dag : directed acycling graph
+
+7.Now git add , commit , push
+
+To enable auto staging, run:
+dvc config core.autostage true
