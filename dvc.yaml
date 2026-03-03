@@ -6,6 +6,8 @@ stages:
     # initially we had commented the params bcz we had not defined the params.yaml but now since we have defined the params.yaml so we can now uncomment it .
     params:
     - data_ingestion.test_size
+    # dvc.yaml kae outs mae jo bhi chiz likha rahega usko dvc khud track kar leta hai , so this time due to this yaml file we do not need to do dvc add data/
+    # directly we can do dvc commit push
     outs:
     - data/raw
   data_preprocessing:
