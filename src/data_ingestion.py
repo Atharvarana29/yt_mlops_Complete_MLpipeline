@@ -2,6 +2,7 @@ import pandas as pd
 import os # has makerdirs method
 from sklearn.model_selection import train_test_split
 import logging #module
+import yaml # to allow the file to do use the config params
 
 
 ### Implementing Logging Module
@@ -42,6 +43,24 @@ file_handler.setFormatter(formatter)
 if not logger.handlers: # industry best practice to check if not added then add 
     logger.addHandler(console_handler) # now first we created the handler and now putting both the handlers inside the logger object 
     logger.addHandler(file_handler)
+
+
+def load_params(params_path: str) -> dict: #this function will read our params file 
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params # it will open the params file and will return the params inside it 
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 
 # loading the data 
@@ -89,7 +108,13 @@ def save_data(train_data : pd.DataFrame , test_data: pd.DataFrame , data_path : 
 
 def main():
     try:
-        test_size = 0.2  # proportion of data reserved for testing
+        # data_ingestion
+        # here we are using the industry standard for params config yaml file instead of hard coding tesT_size 
+
+        params = load_params(params_path='params.yaml')
+        test_size = params['data_ingestion']['test_size']  #now we will load test size into dictionary style , params file kae andar data_ingestion uske andar test_size
+        
+        # test_size = 0.2  # proportion of data reserved for testing
         # use raw string or forward slashes to avoid escape issues
         data_path = r'D:\MLOps\Day5 yt_mlops_Complete_MLpipeline\experiments\spam.csv'
         df = load_data(data_url=data_path)

@@ -1,0 +1,22 @@
+# we need to add the params 
+
+# params:
+#     - data_ingestion.test_size
+
+#  params:
+#     - feature_engineering.max_features
+
+# params:
+#     - model_building.n_estimators
+#     - model_building.random_state
+
+
+data_ingestion: # i.e inside this file we want to adjust this param 
+  test_size: 0.15
+
+feature_engineering:
+  max_features: 40
+
+model_building: 
+  n_estimators : 20
+  random_state : 2

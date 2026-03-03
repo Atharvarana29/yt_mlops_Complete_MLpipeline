@@ -2,6 +2,7 @@ import pandas as pd
 import os # has makerdirs method
 from sklearn.feature_extraction.text import TfidfVectorizer  
 import logging #module
+import yaml
 
 
 ### Implementing Logging Module
@@ -31,6 +32,23 @@ file_handler.setFormatter(formatter)
 if not logger.handlers: # industry best practice to check if not added then add 
     logger.addHandler(console_handler) # now first we created the handler and now putting both the handlers inside the logger object 
     logger.addHandler(file_handler)
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 
 # loading the data from the interim file of the data folder , i.e from the same last place where our data was last saved 
@@ -89,7 +107,11 @@ def save_data(df: pd.DataFrame , file_path : str ) ->None:
 
 def main():
     try:
-        max_features = 50 # each and every unique word becomes a column  , earlier we had only two : one test and other target
+        # feature_engineering
+        params = load_params(params_path='params.yaml')
+        max_features = params['feature_engineering']['max_features']
+
+        # max_features = 50 # each and every unique word becomes a column  , earlier we had only two : one test and other target
 
         # train_data = load_data('D:\MLOps\Day5 yt_mlops_Complete_MLpipeline\data\interim\train_processed.csv') # back slashes (\) for file path won't work here
         # test_data = load_data('D:\MLOps\Day5 yt_mlops_Complete_MLpipeline\data\interim\test_processed.csv')

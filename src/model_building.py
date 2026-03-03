@@ -4,6 +4,7 @@ import pandas as pd
 import pickle 
 import logging #module
 from sklearn.ensemble import RandomForestClassifier # since we had got highest accuracy in rf when doing the train test 
+import yaml
 
 ### Implementing Logging Module
 
@@ -33,6 +34,23 @@ if not logger.handlers: # industry best practice to check if not added then add
     logger.addHandler(console_handler) # now first we created the handler and now putting both the handlers inside the logger object 
     logger.addHandler(file_handler)
 
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 # this time we will be loading the data from the processed  file of the data folder , i.e like earlier components from the same last place where our data was last saved 
 def load_data(file_path: str) -> pd.DataFrame:
@@ -109,7 +127,9 @@ def save_model(model, file_path : str ) ->None:
     
 def main():
     try:
-        params = {'n_estimators':25 , 'random_state':2}
+        # model_building
+        params = load_params('params.yaml')['model_building']
+        # params = {'n_estimators':25 , 'random_state':2}
         train_data = load_data('./data/processed/train_tfidf.csv')
         # Instead of hardcoding: the above file path use below :
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -119,7 +139,7 @@ def main():
         X_train = train_data.iloc[: , : -1].values
         y_train = train_data.iloc[:,-1].values
 
-        clf = train_model(X_train , y_train , params)
+        clf = train_model(X_train , y_train , params) # params ka n_estimator and random_state dono feed ho jayega automatically 
 
         model_save_path = 'models/model.pkl'
         save_model(clf ,model_save_path)
